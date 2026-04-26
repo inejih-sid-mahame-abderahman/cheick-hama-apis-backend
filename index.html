@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>CHEICK HAMA • Phase 0 (Reset & Reinit), 4, 5, 9 | ALMARBAT API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+        * { transition: all 0.2s ease; }
+        body { font-family: 'Cairo', system-ui; background: #f8fafc; }
+        .developer-badge { background: linear-gradient(135deg, #dc2626, #991b1b); }
+        .screen-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; }
+        .screen-card:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 25px 35px -12px rgba(0,0,0,0.2); }
+        .phase-header { border-right: 8px solid #dc2626; background: linear-gradient(90deg, transparent, #fef2f2); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 10px; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+        .animate-entry { animation: fadeSlide 0.4s ease-out; }
+    </style>
+</head>
+<body>
+
+<div class="bg-gradient-to-r from-red-900 to-red-700 text-white shadow-2xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-shield-haltered text-4xl drop-shadow"></i>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight">CHEICK HAMA • DEV</h1>
+                <p class="text-xs opacity-80">Phases: 0 (Reset & Reinit), 4, 5, 9 | ALMARBAT API</p>
+            </div>
+        </div>
+        <div class="developer-badge rounded-full px-6 py-2 text-center">
+            <div class="font-bold text-sm">⚡ CHEICK HAMA</div>
+            <div class="text-xs opacity-90">Backend Specialist</div>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-5 pt-8 pb-4">
+    <div class="flex flex-wrap gap-3 mb-8" id="phaseFilterButtons"></div>
+</div>
+
+<div id="screensContainer" class="max-w-7xl mx-auto px-5 pb-16"></div>
+
+<div id="techModal" class="fixed inset-0 bg-black/85 z-[9999] hidden items-center justify-center p-4 backdrop-blur-sm" onclick="if(event.target===this) closeTechModal()">
+    <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-entry">
+        <div class="bg-gradient-to-r from-red-50 to-white px-6 py-4 border-b flex justify-between items-center sticky top-0">
+            <div class="flex items-center gap-3 flex-wrap">
+                <span id="modalPhaseTag" class="bg-red-700 text-white text-xs font-bold px-4 py-1.5 rounded-full"></span>
+                <h2 id="modalTitle" class="text-xl md:text-2xl font-bold"></h2>
+            </div>
+            <button onclick="closeTechModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-red-100 text-red-600">✕</button>
+        </div>
+        <div class="flex flex-col md:flex-row overflow-auto flex-1">
+            <div class="md:w-1/2 bg-gray-900 flex items-center justify-center p-6">
+                <img id="modalImg" class="max-h-[55vh] md:max-h-[70vh] w-auto object-contain rounded-xl shadow-2xl border border-white/20" alt="screen preview">
+            </div>
+            <div class="md:w-1/2 p-6 space-y-5 overflow-y-auto">
+                <div><h3 class="text-red-800 font-bold text-sm uppercase tracking-wider"><i class="fa-regular fa-file-lines"></i> الوصف الوظيفي</h3><p id="modalDesc" class="text-slate-700 mt-1 leading-relaxed"></p></div>
+                <div class="bg-slate-900 rounded-2xl p-4"><h3 class="text-white font-bold text-sm mb-3"><i class="fa-solid fa-plug"></i> Django DRF API Endpoints</h3><div id="modalApis" class="space-y-3"></div></div>
+                <div><h3 class="text-red-800 font-bold text-sm uppercase tracking-wider"><i class="fa-solid fa-database"></i> النماذج المرتبطة</h3><div id="modalModels" class="flex flex-wrap gap-2 mt-2"></div></div>
+                <div class="bg-gradient-to-r from-slate-100 to-red-50 p-4 rounded-2xl"><h3 class="font-bold text-red-800"><i class="fa-solid fa-diagram-project"></i> تدفق البيانات</h3><p id="modalFlow" class="text-sm text-slate-800 mt-2 font-mono"></p></div>
+                <button onclick="closeTechModal()" class="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-2xl font-bold">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const phasesMeta = [
+    { key: "phase0", name: "🚀 PHASE 0: المصادقة والتسجيل", icon: "fa-rocket", color: "emerald" },
+    { key: "phase1", name: "🔔 PHASE 1: نظام الإشعارات", icon: "fa-bell", color: "blue" },
+    { key: "phase2", name: "🛍️ PHASE 2: عملية الشراء", icon: "fa-cart-shopping", color: "amber" },
+    { key: "phase3", name: "💰 PHASE 3: الدفع عبر Bankily", icon: "fa-credit-card", color: "purple" },
+    { key: "phase4", name: "🌾 PHASE 4: إدارة البائع", icon: "fa-tractor", color: "green" },
+    { key: "phase5", name: "🔪 PHASE 5: تجهيز الجزار", icon: "fa-kitchen-set", color: "orange" },
+    { key: "phase6", name: "🚚 PHASE 6: اللوجستيات والتوصيل", icon: "fa-truck-fast", color: "sky" },
+    { key: "phase7", name: "👤 PHASE 7: الملف الشخصي", icon: "fa-person", color: "amber" },
+    { key: "phase8", name: "🛍️ PHASE 8: الشراء الجماعي", icon: "fa-cart-shopping", color: "amber" },
+    { key: "phase9", name: "🌾 PHASE 9: عملية نشر الحيوان", icon: "fa-tractor", color: "green" },
+    { key: "phase10", name: "🔍 PHASE 10: إدارة البحث والفلاتر", icon: "fa-search", color: "green" },
+    { key: "phase11", name: "📜 PHASE 11: سجل الطلبات و QR Code", icon: "fa-history", color: "green" },
+    { key: "phase12", name: "📜 PHASE 11: إدارة الشراء  ", icon: "fa-history", color: "green" },
+];
+
+const screensDB = [
+    // PHASE 0
+   
+    
+    { id: 4, src: "commun screens between all users otp verification screen.jpeg", title: "التحقق من OTP", phase: "phase0", desc: "إدخال رمز التحقق المرسل إلى الهاتف", apis: [{ method: "POST", path: "/auth/verify-otp/", desc: "التحقق من OTP" }], models: ["OTPVerification"], flow: "Verify OTP → activate account" },
+    { id: 5, src: "commun screens between all users reinitialise passowrd .jpeg", title: "إعادة تعيين كلمة المرور", phase: "phase0", desc: "استعادة الحساب عبر رقم الهاتف", apis: [{ method: "POST", path: "/auth/password-reset/", desc: "طلب إعادة التعيين" }], models: ["Utilisateur"], flow: "Send OTP → verify → set new password" },
+    
+
+   
+  
+    // PHASE 4: Seller
+    { id: 24, src: "saller screens saller home screen .jpeg", title: "لوحة تحكم البائع", phase: "phase4", desc: "قائمة الحيوانات المعروضة", apis: [{ method: "GET", path: "/seller/animals/", desc: "حيواناتي" }], models: ["Animal"], flow: "Seller dashboard" },
+    { id: 25, src: "saller screens animal publishing screen step 1.jpeg", title: "إضافة حيوان - الخطوة 1", phase: "phase9", desc: "اختيار نوع الحيوان", apis: [{ method: "POST", path: "/animals/create/", desc: "بدء إضافة حيوان" }], models: ["Animal"], flow: "Step 1: Type selection" },
+    { id: 26, src: "saller screens animal publishing screen step 2.jpeg", title: "إضافة حيوان - السعر والوصف", phase: "phase9", desc: "تحديد السعر والوزن والوصف", apis: [{ method: "PATCH", path: "/animals/{id}/", desc: "تحديث بيانات الحيوان" }], models: ["Animal"], flow: "Step 2: Price & description" },
+    { id: 27, src: "saller screens animal publishing screen step 3.jpeg", title: "إضافة حيوان - الصور والموقع", phase: "phase9", desc: "رفع الصور والفيديو + الموقع", apis: [{ method: "POST", path: "/animals/{id}/media/", desc: "رفع وسائط" }], models: ["AnimalMedia"], flow: "Upload images + set location" },
+    { id: 28, src: "saller screens animal publishing screen animal publishing confirmaion screnandpending screen last step.jpeg", title: "قيد المراجعة (Pending Approval)", phase: "phase9", desc: "انتظار موافقة الإدارة بعد نشر الحيوان", apis: [{ method: "GET", path: "/users/me/", desc: "حالة الحساب" }], models: ["Utilisateur", "Profile*"], flow: "Check est_approuve field" },
+    { id: 29, src: "saller screens animal qr code screen for the delevery guy to scanit and pick up anil form saller.jpeg", title: "رمز QR لاستلام الحيوان من البائع", phase: "phase4", desc: "إظهار QR للسائق", apis: [{ method: "GET", path: "/animals/{id}/pickup-qr/", desc: "QR للاستلام" }], models: ["Animal"], flow: "Driver scans at seller location" },
+
+    // PHASE 5: Butcher
+    { id: 29, src: "bucher screens bucher home screen.jpeg", title: "لوحة الجزار", phase: "phase5", desc: "الطلبات المعلقة", apis: [{ method: "GET", path: "/butcher/preparations/", desc: "طلبات التجهيز" }], models: ["Preparation"], flow: "Butcher dashboard" },
+    { id: 30, src: "bucher screens qr code screen.jpeg", title: "لوحة الجزار", phase: "phase5", desc: "الطلبات المعلقة", apis: [{ method: "GET", path: "/butcher/preparations/", desc: "طلبات التجهيز" }], models: ["Preparation"], flow: "Butcher dashboard" },
+
+   
+    
+];
+let currentPhaseFilter = "all";
+
+function renderFilters() {
+    const container = document.getElementById("phaseFilterButtons");
+    const myPhases = ["phase0", "phase4", "phase5", "phase9"];
+    const filteredPhases = phasesMeta.filter(p => myPhases.includes(p.key));
+    container.innerHTML = `<button onclick="setPhaseFilter('all')" class="px-6 py-3 rounded-full font-bold transition-all ${currentPhaseFilter==='all' ? 'bg-red-700 text-white shadow-lg' : 'bg-white border text-slate-700'}">جميع شاشاتي (${screensDB.length})</button>${filteredPhases.map(p => `<button onclick="setPhaseFilter('${p.key}')" class="px-6 py-3 rounded-full font-bold transition-all ${currentPhaseFilter===p.key ? 'bg-red-700 text-white shadow-lg' : 'bg-white border text-slate-700'}">${p.name}</button>`).join('')}`;
+}
+
+function setPhaseFilter(phase) { currentPhaseFilter = phase; renderFilters(); renderScreens(); }
+
+function renderScreens() {
+    let filtered = currentPhaseFilter === "all" ? screensDB : screensDB.filter(s => s.phase === currentPhaseFilter);
+    const container = document.getElementById("screensContainer");
+    if (filtered.length === 0) { container.innerHTML = `<div class="text-center p-20 text-slate-500">لا توجد شاشات في هذا الفلتر</div>`; return; }
+    const grouped = {};
+    filtered.forEach(s => { if (!grouped[s.phase]) grouped[s.phase] = []; grouped[s.phase].push(s); });
+    let html = '';
+    phasesMeta.forEach(phaseInfo => {
+        const group = grouped[phaseInfo.key];
+        if (!group || group.length === 0) return;
+        html += `<div class="mb-16"><div class="phase-header pr-6 mb-6 p-5 rounded-2xl"><h2 class="text-2xl font-black flex items-center gap-4"><i class="fa-solid ${phaseInfo.icon} text-3xl text-red-600"></i>${phaseInfo.name} <span class="text-red-600">(${group.length})</span></h2></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">`;
+        group.forEach(screen => {
+            html += `<div class="screen-card bg-white rounded-3xl overflow-hidden shadow" onclick='showTechModal(${JSON.stringify(screen)})'><img src="${screen.src}" class="w-full aspect-[9/19] object-cover" alt="${screen.title}" onerror="this.src='https://placehold.co/300x570?text=${encodeURIComponent(screen.title)}'"><div class="p-5"><h3 class="font-bold text-lg leading-tight">${screen.title}</h3><p class="text-sm text-slate-600 mt-2 line-clamp-3">${screen.desc}</p></div></div>`;
+        });
+        html += `</div></div>`;
+    });
+    container.innerHTML = html;
+}
+
+window.showTechModal = function(screen) {
+    document.getElementById("modalTitle").innerText = screen.title;
+    document.getElementById("modalImg").src = screen.src;
+    document.getElementById("modalDesc").innerText = screen.desc;
+    const phaseObj = phasesMeta.find(p => p.key === screen.phase);
+    document.getElementById("modalPhaseTag").innerHTML = `<i class="fa-solid ${phaseObj?.icon || 'fa-circle'}"></i> ${phaseObj?.name || screen.phase}`;
+    let apisHTML = screen.apis && screen.apis.length > 0 ? screen.apis.map(api => `<div class="flex gap-3 items-start"><span class="badge-${api.method.toLowerCase()} text-white text-xs font-bold px-3 py-1 rounded">${api.method}</span><div><code class="text-red-600 font-medium">/api/v1${api.path}</code><p class="text-xs text-slate-500 mt-1">${api.desc}</p></div></div>`).join('') : '<p class="text-slate-400">لم يتم تحديد APIs بعد</p>';
+    document.getElementById("modalApis").innerHTML = apisHTML;
+    document.getElementById("modalModels").innerHTML = (screen.models || []).map(m => `<span class="bg-red-100 text-red-800 px-4 py-1.5 rounded-2xl text-sm">${m}</span>`).join('');
+    document.getElementById("modalFlow").innerText = screen.flow || "تدفق البيانات يتم تحديده حسب المتطلبات النهائية";
+    const modal = document.getElementById("techModal");
+    modal.classList.remove("hidden");
+    modal.style.display = "flex";
+};
+
+window.closeTechModal = function() { const modal = document.getElementById("techModal"); modal.style.display = "none"; modal.classList.add("hidden"); };
+function init() { renderFilters(); renderScreens(); }
+init();
+</script>
+</body>
+</html>
